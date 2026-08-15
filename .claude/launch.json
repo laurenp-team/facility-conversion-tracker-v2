@@ -2,8 +2,8 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "facility-conversion-tracker-dev",
-      "runtimeExecutable": "C:\\Users\\lauren.pendar\\Desktop\\AI App\\scripts\\dev-with-path.cmd",
+      "name": "facility-conversion-tracker-v2-dev",
+      "runtimeExecutable": "C:\\Users\\lauren.pendar\\Desktop\\Facility Conversion Tracker v2\\scripts\\dev-with-path.cmd",
       "runtimeArgs": [],
       "port": 3000
     }
