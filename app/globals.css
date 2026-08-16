@@ -423,6 +423,31 @@ button:disabled {
   padding-left: 0.4rem;
 }
 
+.health-score-card {
+  margin-bottom: 1.5rem;
+}
+
+.health-score-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+
+.health-score-header h2 {
+  margin-bottom: 0;
+}
+
+.health-score-reasons {
+  list-style: disc;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+}
+
 .contacts-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));

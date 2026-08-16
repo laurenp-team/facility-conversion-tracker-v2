@@ -2,9 +2,12 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import type { Conversion } from "@/lib/types";
 import { NewConversionForm } from "./new-conversion-form";
-import { GoLiveBadge } from "./go-live-badge";
+import { HealthScoreBadge } from "./health-score-badge";
 
 export const dynamic = "force-dynamic";
+// A slow Claude call (via the health score's post-go-live stalled-issue
+// analysis) can otherwise get this cut off before it returns.
+export const maxDuration = 60;
 
 function formatGoLiveDate(dateStr: string): string {
   const [y, m, d] = dateStr.split("-").map(Number);
@@ -50,7 +53,7 @@ export default async function HomePage() {
                   </span>
                 </div>
                 <div className="conversion-card-meta">
-                  <GoLiveBadge conversion={c} />
+                  <HealthScoreBadge conversionId={c.id} />
                   <svg
                     className="conversion-card-chevron"
                     viewBox="0 0 24 24"
