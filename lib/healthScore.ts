@@ -99,6 +99,22 @@ export async function getHealthScore(conversionId: string): Promise<HealthScoreR
   let atRisk = false;
   let critical = false;
 
+  // Independent of daysUntilGoLive: a hardware item already scheduled to
+  // arrive after go-live is a known problem today, not one that should wait
+  // to surface until go-live is close. Distinct from the outstanding-hardware
+  // reason above, which only fires inside the at-risk/critical windows.
+  const lateHardware = hardware.filter(
+    (h) => h.expected_delivery_date !== null && h.expected_delivery_date > conversion.go_live_date
+  );
+  if (lateHardware.length > 0) {
+    critical = true;
+    for (const h of lateHardware) {
+      reasons.push(
+        `${h.item_name} expected ${h.expected_delivery_date}, after go-live ${conversion.go_live_date}`
+      );
+    }
+  }
+
   function addOutstandingItemReasons() {
     if (outstandingDocs.length > 0) {
       reasons.push(`${outstandingDocs.length} document(s) not yet approved/received`);
