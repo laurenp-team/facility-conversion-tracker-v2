@@ -13,6 +13,18 @@ const CONTACT_FIELDS = [
   "it_contact_name",
   "it_contact_email",
   "it_contact_phone",
+  "trust_software_name",
+  "trust_contact_name",
+  "trust_contact_email",
+  "trust_contact_phone",
+  "jms_name",
+  "jms_contact_name",
+  "jms_contact_email",
+  "jms_contact_phone",
+  "phone_provider_name",
+  "phone_provider_contact_name",
+  "phone_provider_contact_email",
+  "phone_provider_contact_phone",
 ] as const;
 
 // Backs the "Save" button on the Conversion Record screen for editing
@@ -24,7 +36,7 @@ export async function PATCH(
   const { id } = await params;
   const body = await request.json();
 
-  const updates: Record<string, string | null> = {};
+  const updates: Record<string, string | number | null> = {};
   if (typeof body.facility_name === "string" && body.facility_name.trim()) {
     updates.facility_name = body.facility_name.trim();
   }
@@ -34,6 +46,17 @@ export async function PATCH(
   for (const field of CONTACT_FIELDS) {
     if (typeof body[field] === "string") {
       updates[field] = body[field].trim() || null;
+    }
+  }
+  if (body.adp !== undefined) {
+    if (body.adp === null || body.adp === "") {
+      updates.adp = null;
+    } else {
+      const parsed = Number(body.adp);
+      if (!Number.isInteger(parsed)) {
+        return NextResponse.json({ error: "adp must be an integer" }, { status: 400 });
+      }
+      updates.adp = parsed;
     }
   }
 

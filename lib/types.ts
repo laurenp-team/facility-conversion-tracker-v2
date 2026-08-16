@@ -16,6 +16,22 @@ export interface Conversion {
   it_contact_name: string | null;
   it_contact_email: string | null;
   it_contact_phone: string | null;
+  adp: number | null;
+  trust_software_name: string | null;
+  trust_contact_name: string | null;
+  trust_contact_email: string | null;
+  trust_contact_phone: string | null;
+  // jms_* and phone_provider_* feed an upcoming health-score feature as a
+  // high-urgency risk category (critical if unknown within 4 weeks of
+  // go-live) - keep these names stable. trust_* above is reference-only.
+  jms_name: string | null;
+  jms_contact_name: string | null;
+  jms_contact_email: string | null;
+  jms_contact_phone: string | null;
+  phone_provider_name: string | null;
+  phone_provider_contact_name: string | null;
+  phone_provider_contact_email: string | null;
+  phone_provider_contact_phone: string | null;
 }
 
 export type ContactRole = "main" | "finance" | "it";

@@ -54,6 +54,72 @@ function contactFieldsFromConversion(
   }
 }
 
+// "Facility details" provider cards — same shape/visual style as the
+// Main/Finance/IT contact cards above, but the underlying columns don't
+// follow one uniform ${role}_contact_* pattern, so each role's field names
+// are spelled out explicitly here rather than derived.
+interface ProviderFields {
+  name: string;
+  contactName: string;
+  contactEmail: string;
+  contactPhone: string;
+}
+
+type ProviderKey = "trust" | "jms" | "phone_provider";
+
+// jms/phone_provider field names feed an upcoming health-score feature
+// (high-urgency risk category, critical if unknown within 4 weeks of
+// go-live) - keep these column names stable. trust_* is reference-only.
+const PROVIDER_CONFIGS: {
+  key: ProviderKey;
+  label: string;
+  nameLabel: string;
+  nameField: keyof Conversion;
+  contactNameField: keyof Conversion;
+  contactEmailField: keyof Conversion;
+  contactPhoneField: keyof Conversion;
+}[] = [
+  {
+    key: "trust",
+    label: "Trust Accounting Software",
+    nameLabel: "Software name",
+    nameField: "trust_software_name",
+    contactNameField: "trust_contact_name",
+    contactEmailField: "trust_contact_email",
+    contactPhoneField: "trust_contact_phone",
+  },
+  {
+    key: "jms",
+    label: "JMS",
+    nameLabel: "Provider name",
+    nameField: "jms_name",
+    contactNameField: "jms_contact_name",
+    contactEmailField: "jms_contact_email",
+    contactPhoneField: "jms_contact_phone",
+  },
+  {
+    key: "phone_provider",
+    label: "Phone Provider",
+    nameLabel: "Provider name",
+    nameField: "phone_provider_name",
+    contactNameField: "phone_provider_contact_name",
+    contactEmailField: "phone_provider_contact_email",
+    contactPhoneField: "phone_provider_contact_phone",
+  },
+];
+
+function providerFieldsFromConversion(
+  conversion: Conversion,
+  config: (typeof PROVIDER_CONFIGS)[number]
+): ProviderFields {
+  return {
+    name: (conversion[config.nameField] as string | null) ?? "",
+    contactName: (conversion[config.contactNameField] as string | null) ?? "",
+    contactEmail: (conversion[config.contactEmailField] as string | null) ?? "",
+    contactPhone: (conversion[config.contactPhoneField] as string | null) ?? "",
+  };
+}
+
 export function ConversionDetailsForm({ conversion }: { conversion: Conversion }) {
   const router = useRouter();
   const [facilityName, setFacilityName] = useState(conversion.facility_name);
@@ -62,6 +128,15 @@ export function ConversionDetailsForm({ conversion }: { conversion: Conversion }
     Object.fromEntries(
       CONTACT_ROLES.map(({ key }) => [key, contactFieldsFromConversion(conversion, key)])
     )
+  );
+  const [adp, setAdp] = useState(conversion.adp !== null ? String(conversion.adp) : "");
+  const [providers, setProviders] = useState<Record<ProviderKey, ProviderFields>>(() =>
+    Object.fromEntries(
+      PROVIDER_CONFIGS.map((config) => [
+        config.key,
+        providerFieldsFromConversion(conversion, config),
+      ])
+    ) as Record<ProviderKey, ProviderFields>
   );
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -73,6 +148,10 @@ export function ConversionDetailsForm({ conversion }: { conversion: Conversion }
     value: string
   ) {
     setContacts((prev) => ({ ...prev, [role]: { ...prev[role], [field]: value } }));
+  }
+
+  function updateProvider(role: ProviderKey, field: keyof ProviderFields, value: string) {
+    setProviders((prev) => ({ ...prev, [role]: { ...prev[role], [field]: value } }));
   }
 
   async function handleSave() {
@@ -87,13 +166,23 @@ export function ConversionDetailsForm({ conversion }: { conversion: Conversion }
       contactPayload[`${key}_contact_phone`] = contacts[key].phone;
     }
 
+    const providerPayload: Record<string, string> = {};
+    for (const config of PROVIDER_CONFIGS) {
+      providerPayload[config.nameField] = providers[config.key].name;
+      providerPayload[config.contactNameField] = providers[config.key].contactName;
+      providerPayload[config.contactEmailField] = providers[config.key].contactEmail;
+      providerPayload[config.contactPhoneField] = providers[config.key].contactPhone;
+    }
+
     const res = await fetch(`/api/conversions/${conversion.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         facility_name: facilityName,
         go_live_date: goLiveDate,
+        adp: adp === "" ? null : adp,
         ...contactPayload,
+        ...providerPayload,
       }),
     });
 
@@ -160,6 +249,63 @@ export function ConversionDetailsForm({ conversion }: { conversion: Conversion }
                 type="tel"
                 value={contacts[key].phone}
                 onChange={(e) => updateContact(key, "phone", e.target.value)}
+              />
+            </label>
+          </div>
+        ))}
+      </div>
+
+      <h2>Facility details</h2>
+      <div className="inline-form field-row">
+        <label>
+          ADP
+          <input
+            type="number"
+            value={adp}
+            onChange={(e) => setAdp(e.target.value)}
+          />
+        </label>
+      </div>
+      <div className="contacts-grid">
+        {PROVIDER_CONFIGS.map((config) => (
+          <div className="contact-card" key={config.key}>
+            <h3>{config.label}</h3>
+            <label>
+              {config.nameLabel}
+              <input
+                type="text"
+                value={providers[config.key].name}
+                onChange={(e) => updateProvider(config.key, "name", e.target.value)}
+              />
+            </label>
+            <label>
+              Contact name
+              <input
+                type="text"
+                value={providers[config.key].contactName}
+                onChange={(e) =>
+                  updateProvider(config.key, "contactName", e.target.value)
+                }
+              />
+            </label>
+            <label>
+              Contact email
+              <input
+                type="email"
+                value={providers[config.key].contactEmail}
+                onChange={(e) =>
+                  updateProvider(config.key, "contactEmail", e.target.value)
+                }
+              />
+            </label>
+            <label>
+              Contact phone
+              <input
+                type="tel"
+                value={providers[config.key].contactPhone}
+                onChange={(e) =>
+                  updateProvider(config.key, "contactPhone", e.target.value)
+                }
               />
             </label>
           </div>
