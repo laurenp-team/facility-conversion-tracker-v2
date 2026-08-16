@@ -373,7 +373,9 @@ button:disabled {
 .badge-resolvable_onsite,
 .badge-approved,
 .badge-delivered,
-.badge-completed {
+.badge-completed,
+.badge-provided,
+.badge-finance {
   background: #1f7a3d;
 }
 
@@ -384,22 +386,27 @@ button:disabled {
 .badge-not_sent,
 .badge-pending,
 .badge-not_ordered,
-.badge-not_completed {
+.badge-not_completed,
+.badge-needed,
+.badge-other {
   background: #666;
 }
 
 .badge-sent,
 .badge-ordered,
-.badge-awaiting_information {
+.badge-awaiting_information,
+.badge-medical {
   background: #b8860b;
 }
 
 .badge-received,
-.badge-shipped {
+.badge-shipped,
+.badge-general_staff {
   background: #2563a8;
 }
 
-.badge-not_applicable {
+.badge-not_applicable,
+.badge-admin {
   background: #6b5b95;
 }
 

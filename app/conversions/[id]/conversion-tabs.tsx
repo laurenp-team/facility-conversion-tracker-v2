@@ -9,6 +9,7 @@ const TABS = [
   { href: "/issues", label: "Issue Log" },
   { href: "/hardware", label: "Hardware" },
   { href: "/settings", label: "Settings" },
+  { href: "/onsite-schedule", label: "Onsite Schedule" },
 ];
 
 export function ConversionTabs({ conversionId }: { conversionId: string }) {

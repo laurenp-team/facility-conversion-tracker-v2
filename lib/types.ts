@@ -86,6 +86,31 @@ export interface SettingRow {
   status: SettingStatus;
 }
 
+export type OnsiteRequirementStatus = "needed" | "provided";
+
+export interface OnsiteRequirement {
+  id: string;
+  conversion_id: string;
+  requirement_name: string;
+  status: OnsiteRequirementStatus;
+}
+
+export interface OnsiteTeamMember {
+  id: string;
+  conversion_id: string;
+  staff_name: string;
+}
+
+export type TrainingType = "general_staff" | "admin" | "medical" | "finance" | "other";
+
+export interface Training {
+  id: string;
+  conversion_id: string;
+  training_type: TrainingType | null;
+  date: string | null;
+  time: string | null;
+}
+
 // Fixed checklist populated once per conversion at creation time.
 export const SETTING_NAMES = [
   "create site",
