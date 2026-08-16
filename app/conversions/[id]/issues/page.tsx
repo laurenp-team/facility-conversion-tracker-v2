@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import type { Conversion, Issue, IssueComment } from "@/lib/types";
@@ -62,10 +61,7 @@ export default async function IssueLogPage({
   }
 
   return (
-    <main className="page">
-      <p>
-        <Link href={`/conversions/${id}`}>&larr; Conversion Record</Link>
-      </p>
+    <>
       <h1>Issue Log — {conversion.facility_name}</h1>
 
       <IssueForm conversionId={id} />
@@ -90,6 +86,6 @@ export default async function IssueLogPage({
           />
         </>
       )}
-    </main>
+    </>
   );
 }

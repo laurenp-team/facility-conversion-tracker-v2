@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import type { Conversion, SettingRow } from "@/lib/types";
@@ -35,10 +34,7 @@ export default async function SettingsPage({
   );
 
   return (
-    <main className="page">
-      <p>
-        <Link href={`/conversions/${id}`}>&larr; Conversion Record</Link>
-      </p>
+    <>
       <h1>Settings — {conversion.facility_name}</h1>
 
       {settingsResult.error && (
@@ -47,6 +43,6 @@ export default async function SettingsPage({
         </p>
       )}
       <SettingsTable initialSettings={orderedSettings} />
-    </main>
+    </>
   );
 }
