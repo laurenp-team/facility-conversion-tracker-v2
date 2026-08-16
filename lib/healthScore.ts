@@ -81,6 +81,7 @@ export async function getHealthScore(conversionId: string): Promise<HealthScoreR
   const issues = (issuesData ?? []) as Issue[];
 
   const today = todayUTC();
+  const todayStr = today.toISOString().slice(0, 10);
   const goLiveDate = parseDateOnly(conversion.go_live_date);
   const daysUntilGoLive = daysBetween(today, goLiveDate);
 
@@ -115,6 +116,22 @@ export async function getHealthScore(conversionId: string): Promise<HealthScoreR
     }
   }
 
+  // Also independent of daysUntilGoLive, and distinct from the above: a
+  // shipment that has already missed its own expected delivery date (whether
+  // or not that date is past go-live) is a known problem today.
+  const missedHardware = hardware.filter(
+    (h) =>
+      h.expected_delivery_date !== null &&
+      h.expected_delivery_date < todayStr &&
+      h.status !== "delivered"
+  );
+  if (missedHardware.length > 0) {
+    critical = true;
+    for (const h of missedHardware) {
+      reasons.push(`${h.item_name} expected ${h.expected_delivery_date}, still ${h.status}`);
+    }
+  }
+
   function addOutstandingItemReasons() {
     if (outstandingDocs.length > 0) {
       reasons.push(`${outstandingDocs.length} document(s) not yet approved/received`);
@@ -127,9 +144,13 @@ export async function getHealthScore(conversionId: string): Promise<HealthScoreR
     }
   }
 
-  function addJmsPhoneReasons() {
-    if (jmsUnknown) reasons.push("JMS provider unknown");
-    if (phoneUnknown) reasons.push("Phone provider unknown");
+  // `postGoLive` swaps in "still unknown" phrasing so the reason reads
+  // consistently with the other post-go-live reasons below, which all call
+  // out that go-live has already passed.
+  function addJmsPhoneReasons(postGoLive = false) {
+    if (jmsUnknown) reasons.push(postGoLive ? "JMS provider still unknown" : "JMS provider unknown");
+    if (phoneUnknown)
+      reasons.push(postGoLive ? "Phone provider still unknown" : "Phone provider unknown");
   }
 
   if (daysUntilGoLive >= 0) {
@@ -177,8 +198,6 @@ export async function getHealthScore(conversionId: string): Promise<HealthScoreR
         (commentsByIssueId[comment.issue_id] ??= []).push(comment);
       }
 
-      const todayStr = today.toISOString().slice(0, 10);
-
       const stalledResults = await Promise.all(
         escalatedOpenIssues.map(async (issue) => {
           const comments = commentsByIssueId[issue.id] ?? [];
@@ -223,6 +242,10 @@ export async function getHealthScore(conversionId: string): Promise<HealthScoreR
     const unresolvedSettings = settings.filter(
       (s) => s.status !== "completed" && s.status !== "not_applicable"
     );
+    // Explicitly includes jmsUnknown/phoneUnknown alongside
+    // docs/hardware/settings — an unknown JMS or phone provider is just as
+    // much an unresolved pre-go-live item as an unsent document once go-live
+    // has passed.
     const anyPreGoLiveItemUnresolved =
       outstandingDocs.length > 0 ||
       outstandingHardware.length > 0 ||
@@ -247,7 +270,7 @@ export async function getHealthScore(conversionId: string): Promise<HealthScoreR
           `${unresolvedSettings.length} setting(s) still not resolved (go-live has passed)`
         );
       }
-      addJmsPhoneReasons();
+      addJmsPhoneReasons(true);
     }
   }
 
