@@ -23,6 +23,23 @@ export async function PATCH(
       );
     }
     updates.status = body.status;
+
+    // date_sent was previously only ever stamped by the reminders cron (and
+    // only for site_build's automatic not_sent -> sent transition), so a
+    // manual "Update status" via this endpoint left it blank forever —
+    // financial docs in particular never got a date_sent at all. Stamp it
+    // here the first time a document leaves "not_sent", regardless of which
+    // status it lands on, so manual updates behave the same as the cron.
+    if (body.status !== "not_sent") {
+      const { data: existing } = await supabase
+        .from("documents")
+        .select("date_sent")
+        .eq("id", id)
+        .single();
+      if (existing && !existing.date_sent) {
+        updates.date_sent = new Date().toISOString();
+      }
+    }
   }
 
   if (body.name !== undefined) {
