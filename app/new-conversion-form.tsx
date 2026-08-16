@@ -37,29 +37,31 @@ export function NewConversionForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="inline-form">
-      <label>
-        Facility name
-        <input
-          type="text"
-          value={facilityName}
-          onChange={(e) => setFacilityName(e.target.value)}
-          required
-        />
-      </label>
-      <label>
-        Go-live date
-        <input
-          type="date"
-          value={goLiveDate}
-          onChange={(e) => setGoLiveDate(e.target.value)}
-          required
-        />
-      </label>
-      <button type="submit" disabled={submitting}>
-        {submitting ? "Creating…" : "Create conversion"}
-      </button>
-      {error && <p className="error">{error}</p>}
-    </form>
+    <div className="card">
+      <form onSubmit={handleSubmit} className="new-conversion-form">
+        <label className="new-conversion-field-name">
+          Facility name
+          <input
+            type="text"
+            value={facilityName}
+            onChange={(e) => setFacilityName(e.target.value)}
+            required
+          />
+        </label>
+        <label className="new-conversion-field-date">
+          Go-live date
+          <input
+            type="date"
+            value={goLiveDate}
+            onChange={(e) => setGoLiveDate(e.target.value)}
+            required
+          />
+        </label>
+        <button type="submit" disabled={submitting}>
+          {submitting ? "Creating…" : "Create conversion"}
+        </button>
+        {error && <p className="error">{error}</p>}
+      </form>
+    </div>
   );
 }

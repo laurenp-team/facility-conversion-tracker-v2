@@ -2,8 +2,20 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import type { Conversion } from "@/lib/types";
 import { NewConversionForm } from "./new-conversion-form";
+import { GoLiveBadge } from "./go-live-badge";
 
 export const dynamic = "force-dynamic";
+
+function formatGoLiveDate(dateStr: string): string {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const date = new Date(Date.UTC(y, m - 1, d));
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
 
 export default async function HomePage() {
   const { data: conversions, error } = await supabase
@@ -28,15 +40,35 @@ export default async function HomePage() {
           <p>No conversions yet.</p>
         )}
         {!error && conversions && conversions.length > 0 && (
-          <ul className="record-list">
+          <div className="conversion-list">
             {conversions.map((c) => (
-              <li key={c.id}>
-                <Link href={`/conversions/${c.id}`}>
-                  <strong>{c.facility_name}</strong> — go-live {c.go_live_date}
-                </Link>
-              </li>
+              <Link key={c.id} href={`/conversions/${c.id}`} className="conversion-card">
+                <div className="conversion-card-main">
+                  <span className="conversion-card-name">{c.facility_name}</span>
+                  <span className="conversion-card-date">
+                    Go-live {formatGoLiveDate(c.go_live_date)}
+                  </span>
+                </div>
+                <div className="conversion-card-meta">
+                  <GoLiveBadge conversion={c} />
+                  <svg
+                    className="conversion-card-chevron"
+                    viewBox="0 0 24 24"
+                    width="18"
+                    height="18"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="m9 18 6-6-6-6" />
+                  </svg>
+                </div>
+              </Link>
             ))}
-          </ul>
+          </div>
         )}
       </section>
     </main>

@@ -127,13 +127,112 @@ button:disabled {
   opacity: 0.6;
 }
 
-.record-list {
-  list-style: none;
+.card {
+  background: color-mix(in srgb, var(--foreground) 4%, var(--background));
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 1.25rem;
 }
 
-.record-list li {
-  padding: 0.6rem 0;
-  border-bottom: 1px solid #444;
+.new-conversion-form {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.new-conversion-field-name {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  flex: 2 1 240px;
+}
+
+.new-conversion-field-date {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  flex: 0 0 160px;
+}
+
+.new-conversion-form button {
+  margin-left: auto;
+}
+
+.conversion-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.conversion-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: color-mix(in srgb, var(--foreground) 4%, var(--background));
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 0.9rem 1.1rem;
+  text-decoration: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.conversion-card:hover {
+  background: color-mix(in srgb, var(--foreground) 8%, var(--background));
+  border-color: var(--foreground);
+}
+
+.conversion-card-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.conversion-card-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.conversion-card-date {
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+.conversion-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.conversion-card-chevron {
+  opacity: 0.6;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.status-badge-green {
+  background: #1f7a3d;
+}
+
+.status-badge-amber {
+  background: #b8860b;
+}
+
+.status-badge-red {
+  background: #b3401f;
 }
 
 .data-table {
