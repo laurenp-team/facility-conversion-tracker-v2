@@ -39,6 +39,12 @@ export default async function ConversionRecordPage({
         <Link className="nav-button" href={`/conversions/${id}/issues`}>
           Go to Issue Log &rarr;
         </Link>
+        <Link className="nav-button" href={`/conversions/${id}/hardware`}>
+          Go to Hardware &rarr;
+        </Link>
+        <Link className="nav-button" href={`/conversions/${id}/settings`}>
+          Go to Settings &rarr;
+        </Link>
       </div>
     </main>
   );

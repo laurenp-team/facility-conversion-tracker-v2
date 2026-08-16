@@ -269,7 +269,9 @@ button:disabled {
 }
 
 .badge-resolvable_onsite,
-.badge-approved {
+.badge-approved,
+.badge-delivered,
+.badge-completed {
   background: #1f7a3d;
 }
 
@@ -278,16 +280,25 @@ button:disabled {
 }
 
 .badge-not_sent,
-.badge-pending {
+.badge-pending,
+.badge-not_ordered,
+.badge-not_completed {
   background: #666;
 }
 
-.badge-sent {
+.badge-sent,
+.badge-ordered,
+.badge-awaiting_information {
   background: #b8860b;
 }
 
-.badge-received {
+.badge-received,
+.badge-shipped {
   background: #2563a8;
+}
+
+.badge-not_applicable {
+  background: #6b5b95;
 }
 
 .issue-card.resolved {

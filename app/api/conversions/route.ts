@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
+import { SETTING_NAMES } from "@/lib/types";
 
 // Not part of the 5B spec's screens directly, but needed so conversions can
 // be created at all (the spec defines the Conversion Record screen's fields,
@@ -26,6 +27,20 @@ export async function POST(request: Request) {
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  // Auto-populate the fixed 24-item settings checklist for this conversion.
+  const { error: settingsError } = await supabase.from("settings").insert(
+    SETTING_NAMES.map((setting_name) => ({
+      conversion_id: data.id,
+      setting_name,
+    }))
+  );
+
+  if (settingsError) {
+    // The conversion itself was created successfully; log but don't fail
+    // the request over the checklist seeding.
+    console.error("Failed to seed settings checklist:", settingsError);
   }
 
   return NextResponse.json(data, { status: 201 });

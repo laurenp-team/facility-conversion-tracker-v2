@@ -43,3 +43,6 @@ next-env.d.ts
 
 # internal-only reference doc, not needed in the repo (see README)
 docs/Assignment_5A_Facility_Conversion_App_Design.docx
+
+.vercel
+.env*

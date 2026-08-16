@@ -46,3 +46,54 @@ export interface IssueComment {
   comment: string;
   created_at: string;
 }
+
+export type HardwareStatus = "not_ordered" | "ordered" | "shipped" | "delivered";
+
+export interface HardwareItem {
+  id: string;
+  conversion_id: string;
+  item_name: string;
+  status: HardwareStatus;
+  expected_delivery_date: string | null;
+}
+
+export type SettingStatus =
+  | "completed"
+  | "not_completed"
+  | "awaiting_information"
+  | "not_applicable";
+
+export interface SettingRow {
+  id: string;
+  conversion_id: string;
+  setting_name: string;
+  status: SettingStatus;
+}
+
+// Fixed checklist populated once per conversion at creation time.
+export const SETTING_NAMES = [
+  "create site",
+  "create section(s)",
+  "build/assign warehouse",
+  "commission rates",
+  "communication rates",
+  "deposit split",
+  "indigent parameters",
+  "deposit fees",
+  "enable picking",
+  "bail deposits",
+  "deposit types",
+  "lobby setup",
+  "pin/facial settings",
+  "deposit limits",
+  "canteen limits",
+  "KYC",
+  "indigent orders",
+  "Stripe settings",
+  "station settings",
+  "commissary menus & restrictions",
+  "check setup",
+  "facility agreements",
+  "vendors & charges",
+  "user accounts",
+] as const;
